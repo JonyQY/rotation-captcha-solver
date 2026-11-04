@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spincap"
+version = "1.0.0"
+description = "Rotation angle estimation and multi-reader consensus for rotation challenges"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+authors = [{name = "JonyQY"}]
+keywords = ["rotation", "orientation", "captcha", "image", "consensus"]
+dependencies = []
+
+[project.optional-dependencies]
+model = ["rightwayup==1.0.0"]
+browser = ["playwright>=1.40,<2"]
+all = ["rightwayup==1.0.0", "playwright>=1.40,<2"]
+
+[project.scripts]
+spincap = "spincap.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/JonyQY/spincap"
+Issues = "https://github.com/JonyQY/spincap/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["spincap*"]
