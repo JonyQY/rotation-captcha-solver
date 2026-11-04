@@ -1,17 +1,19 @@
-# spincap
+# 旋转图片算法模型
 
 旋转验证码求解框架：**读取图片偏角 → 多档读数一致性筛选 → 换算滑块位移 → 由调用方验证结果**。
 
 提供 Python API、命令行和浏览器回调接口，可独立使用，不依赖原来的复制粘贴工作台。
-核心算法零第三方依赖；内置图片识别由 ORTUS AI 的 [RightWayUp](https://github.com/ortusaitech/rightwayup) 提供。
+附带四档本地模型权重，提供图片角度识别、读数筛选和滑块位移换算。
 
 ## 克隆并安装
 
 需要 Python **3.10 或以上**，推荐 3.11–3.13，使用 64 位 Python。
 
 ```bash
-git clone https://github.com/JonyQY/spincap.git
-cd spincap
+git lfs install
+git clone https://github.com/JonyQY/rotation-image-model.git
+cd rotation-image-model
+git lfs pull
 python -m venv .venv
 ```
 
@@ -23,14 +25,13 @@ python -m pip install --upgrade pip
 python -m pip install ".[model]"
 ```
 
-首次识别会通过 RightWayUp 从 Hugging Face 下载权重，因此第一次调用较慢，且需要能够访问 Hugging Face。
-后续使用本机缓存。**Git 仓库不附带模型权重**。不需要 OpenAI API、API 密钥或 PyTorch。
+仓库包含约 **384 MB** 的 ONNX INT8 权重，通过 Git LFS 下载。克隆前先安装
+[Git LFS](https://git-lfs.com/)。安装后直接读取本地权重，无需首次调用时另行下载模型。
+最大模型采用分片存储，首次使用会自动合并到用户缓存目录并校验完整性；以后直接加载缓存。
+默认使用 CPU，不需要 GPU、API 密钥或 PyTorch。
 
-也可以直接从 GitHub 安装，不手动克隆：
-
-```bash
-python -m pip install "spincap[model] @ git+https://github.com/JonyQY/spincap.git"
-```
+私密仓库需要先登录有权访问的 GitHub 账号；仓库公开后其他人即可直接克隆。
+请按上面的克隆步骤安装，确保 Git LFS 已下载完整权重。
 
 本项目目前通过 GitHub 分发；不要把 `pip install spincap` 当作本项目的安装地址。
 
@@ -146,19 +147,18 @@ python -m playwright install chromium
 
 - 使用圆距离比较角度，例如 359° 和 1° 仅相差 2°。
 - 读数一致性门控用于拒绝分歧较大的题图；接缝筛选用于避开轨道端点附近的不稳定换算。
-- RightWayUp 的 `pico/nano/fast` 使用 ViT-S/14，`max` 使用 ViT-L/14。
-  各档读数不能视为统计独立；一致也可能同时出错。
-- 本项目没有自行训练方向识别模型，不提供通用成功率保证。无明确朝向的图片可能无法识别。
+- 提供 `pico/nano/fast/max` 四档；读数一致也可能同时出错，不能视为统计独立。
+- 无明确朝向的图片可能无法识别；不同题图和控件需要分别验证效果。
 - `read_angle` 的默认门控基于角度一致性及接缝；它不额外按模型的 `abstain` 标志过滤。
-- 缺依赖、下载失败会抛出初始化异常；`read_all` 会报告各档预测错误，`read_angle` 在预测失败时返回 `None`。
+- 缺依赖、权重缺失会抛出初始化异常；`read_all` 会报告各档预测错误，`read_angle` 在预测失败时返回 `None`。
 - 多次读取同一图片的固定模型，不能当作多个独立来源重复投票。
 
-离线预下载请遵循 RightWayUp 的模型目录约定，将完整模型目录通过
-`RIGHTWAYUP_MODEL_DIR` 环境变量指定。上游文件说明见
-[RightWayUp 模型仓库](https://huggingface.co/ortusai/rightwayup)。
+模型文件位于 `spincap/models/`，校验信息在 `manifest.json`。可以通过
+`SPINCAP_MODEL_DIR` 指定另一个完整的本地模型目录，`SPINCAP_CACHE_DIR` 指定分片合并缓存目录。
+如果提示只下载了 Git LFS 指针，请在仓库目录执行 `git lfs pull`，再重新安装。
 
 ## 许可与来源
 
 spincap 代码使用 [MIT](LICENSE) 许可证。
-RightWayUp 代码与权重使用其上游 Apache-2.0 许可证；详见
-[第三方组件说明](THIRD_PARTY_NOTICES.md)。本仓库仅发布独立求解模块、示例和测试。
+模型及依赖的许可与来源见
+[第三方组件说明](THIRD_PARTY_NOTICES.md)。仓库包含算法模块、四档模型权重、调用示例和测试。

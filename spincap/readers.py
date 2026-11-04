@@ -4,7 +4,90 @@
 RightWayUp is developed by ORTUS AI and distributed separately. Different tiers
 use different models or input resolutions; their errors need not be independent."""
 import hashlib
+import json
+import os
+import tempfile
 from pathlib import Path
+
+MODEL_FILES = {
+    'pico': 'pico-s70-int8.onnx',
+    'nano': 'nano-s112-int8.onnx',
+    'fast': 'fast-s224-int8.onnx',
+    'max': 'max-l280-int8.onnx',
+}
+
+
+def _file_hash(path):
+    digest = hashlib.sha256()
+    with path.open('rb') as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _assembled_model(directory, filename):
+    """Assemble a sharded weight in a user cache and verify the original hash."""
+    manifest = directory / 'manifest.json'
+    if not manifest.is_file():
+        return None
+    metadata = json.loads(manifest.read_text(encoding='utf-8'))
+    entry = next((item for item in metadata['files'] if item['name'] == filename), None)
+    if not entry or not entry.get('parts'):
+        return None
+    digest = entry['sha256']
+    if len(digest) != 64 or any(c not in '0123456789abcdef' for c in digest):
+        raise ValueError('Invalid model checksum in manifest')
+    parts = entry['parts']
+    for index, name in enumerate(parts, 1):
+        if name != f'{filename}.part{index:03d}':
+            raise ValueError('Invalid model part name in manifest')
+        part = directory / name
+        if not part.is_file():
+            raise FileNotFoundError('Model part is missing. Run git lfs pull, then reinstall.')
+        with part.open('rb') as stream:
+            if stream.read(80).startswith(b'version https://git-lfs.github.com/spec/v1'):
+                raise RuntimeError('Model parts are Git LFS pointers. Run git lfs pull, then reinstall.')
+    cache_base = os.environ.get('SPINCAP_CACHE_DIR')
+    cache = (Path(cache_base) if cache_base else Path.home() / '.cache' / 'spincap') / digest
+    cache.mkdir(parents=True, exist_ok=True)
+    target = cache / filename
+    if target.is_file() and target.stat().st_size == entry['bytes'] and _file_hash(target) == digest:
+        return target
+    temp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=cache, suffix='.tmp', delete=False) as stream:
+            temp_path = Path(stream.name)
+            for name in parts:
+                with (directory / name).open('rb') as part:
+                    for chunk in iter(lambda: part.read(1024 * 1024), b''):
+                        stream.write(chunk)
+        if temp_path.stat().st_size != entry['bytes'] or _file_hash(temp_path) != digest:
+            raise ValueError('Model checksum mismatch. Run git lfs pull and reinstall the package.')
+        os.replace(temp_path, target)
+        return target
+    finally:
+        if temp_path is not None and temp_path.exists():
+            temp_path.unlink()
+
+
+def local_model_dir(tier, model_dir=None):
+    """Resolve packaged weights without downloading or reading a user cache."""
+    if tier not in MODEL_FILES:
+        raise ValueError('Supported tiers: pico, nano, fast, max')
+    configured = model_dir or os.environ.get('SPINCAP_MODEL_DIR')
+    directory = Path(configured) if configured else Path(__file__).parent / 'models'
+    path = directory / MODEL_FILES[tier]
+    if not path.is_file():
+        assembled = _assembled_model(directory, MODEL_FILES[tier])
+        if assembled is not None:
+            return assembled.parent
+        raise FileNotFoundError('Local model is missing. Run git lfs install && git lfs pull '
+                                'in the repository, then reinstall the package.')
+    with path.open('rb') as stream:
+        if stream.read(80).startswith(b'version https://git-lfs.github.com/spec/v1'):
+            raise RuntimeError('Only a Git LFS pointer was downloaded. Run git lfs pull '
+                               'in the repository, then reinstall the package.')
+    return directory
 
 
 class OrientationReader:
@@ -48,7 +131,7 @@ class FunctionReader(CallableReader):
 class RightWayUpReader(OrientationReader):
     """Optional RightWayUp wrapper; retains the upstream confidence and abstain metadata."""
 
-    def __init__(self, tier='max', name=None, abstain='standard'):
+    def __init__(self, tier='max', name=None, abstain='standard', model_dir=None):
         try:
             from rightwayup import Orienter
         except ImportError as error:
@@ -56,8 +139,10 @@ class RightWayUpReader(OrientationReader):
                               '(or install ".[model]" from the repository).') from error
         self.tier = tier
         self.abstain = abstain
-        self.name = name or f'rightwayup-{tier}'
-        self._orienter = Orienter(tier=tier, abstain=abstain)
+        self.name = name or f'rotation-{tier}'
+        self._orienter = Orienter(tier=tier, abstain=abstain,
+                                 model_dir=local_model_dir(tier, model_dir),
+                                 device='cpu', precision='int8')
         self.last_confidence = None
         self.last_abstain = None
 

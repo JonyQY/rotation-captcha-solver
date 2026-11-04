@@ -8,5 +8,6 @@ dist/
 .env*
 output/
 *.onnx
+!spincap/models/*.onnx
 *.pt
 *.pth

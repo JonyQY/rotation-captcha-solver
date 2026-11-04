@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spincap"
-version = "1.0.0"
-description = "Rotation angle estimation and multi-reader consensus for rotation challenges"
+version = "1.1.0"
+description = "旋转图片算法模型：本地图片方向识别与多档一致性筛选"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md", "licenses/*"]
 authors = [{name = "JonyQY"}]
 keywords = ["rotation", "orientation", "captcha", "image", "consensus"]
 dependencies = []
@@ -23,9 +23,12 @@ all = ["rightwayup==1.0.0", "playwright>=1.40,<2"]
 spincap = "spincap.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/JonyQY/spincap"
-Issues = "https://github.com/JonyQY/spincap/issues"
+Homepage = "https://github.com/JonyQY/rotation-image-model"
+Issues = "https://github.com/JonyQY/rotation-image-model/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["spincap*"]
+
+[tool.setuptools.package-data]
+spincap = ["models/*.onnx", "models/*.part*", "models/*.json"]
