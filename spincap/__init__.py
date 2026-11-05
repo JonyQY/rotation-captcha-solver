@@ -9,7 +9,7 @@ from .gate import GateConfig, GateDecision, decide
 from .readers import CallableReader, OrientationReader, RightWayUpReader
 from .solver import RotationSolver
 from .api import (
-    build_solver, default_readers, offset_for, read_angle, read_all,
+    AngleSession, build_solver, default_readers, offset_for, read_angle, read_all,
     solve_baidu, solve_generic,
 )
 
@@ -23,10 +23,10 @@ __all__ = [
     'GateConfig', 'GateDecision', 'decide',
     # 读图接口
     'OrientationReader', 'CallableReader', 'RightWayUpReader',
-    'default_readers', 'read_angle', 'read_all',
+    'AngleSession', 'default_readers', 'read_angle', 'read_all',
     # 求解
     'RotationSolver', 'build_solver', 'solve_baidu', 'solve_generic',
     '__version__',
 ]
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'

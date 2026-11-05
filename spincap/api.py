@@ -71,7 +71,7 @@ def _resolve(readers, tiers, baseline):
 
 
 def read_angle(image, tiers=DEFAULT_TIERS, require_agreement=True,
-               agree_gap=20.0, min_agreeing=2, baseline='max'):
+               agree_gap=20.0, min_agreeing=2, baseline='max', readers=None):
     """读一张图的角度。这是最常用的入口。
 
     参数
@@ -91,7 +91,7 @@ def read_angle(image, tiers=DEFAULT_TIERS, require_agreement=True,
         if angle is None:
             print('这张图模型读不准，换一张')
     """
-    readers = default_readers(tiers)
+    readers = default_readers(tiers) if readers is None else list(readers)
     readings = {}
     for reader in readers:
         try:
@@ -117,6 +117,26 @@ def read_angle(image, tiers=DEFAULT_TIERS, require_agreement=True,
     from .gate import decide
     decision = decide(readings, config)
     return round(decision.angle, 2) if decision.usable else None
+
+
+class AngleSession:
+    """Load readers once, then read successive images in the same process.
+
+    Create before acquiring a live challenge. Use one session per sequential
+    worker; readers retain prediction metadata and are not shared across threads.
+    """
+
+    def __init__(self, tiers=DEFAULT_TIERS, readers=None):
+        self.tiers = tuple(tiers)
+        self.readers = (default_readers(self.tiers) if readers is None
+                        else list(readers))
+
+    def read_angle(self, image, require_agreement=True, agree_gap=20.0,
+                   min_agreeing=2, baseline='max'):
+        return read_angle(image, tiers=self.tiers, readers=self.readers,
+                          require_agreement=require_agreement,
+                          agree_gap=agree_gap, min_agreeing=min_agreeing,
+                          baseline=baseline)
 
 
 def read_all(image, tiers=DEFAULT_TIERS):

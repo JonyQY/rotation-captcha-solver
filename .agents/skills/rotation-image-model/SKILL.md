@@ -43,7 +43,7 @@ python -m venv .venv
 下文 `python` 表示已选定的解释器；在脚本或工具参数中替换成它的实际路径。
 权重由 Git LFS 随仓库拉取，约 384 MB。最大模型首次使用会在用户缓存中合并分片并校验；后续推理使用本地文件。
 
-## 首选：返回 JSON 的单次调用
+## 单张离线图片：返回 JSON 的单次调用
 
 ```bash
 python -m spincap "/absolute/path/puzzle.png"
@@ -85,7 +85,27 @@ else:
     # result["offset_px"] = offset_for(angle, pixels_per_turn, complement=use_complement)
 ```
 
-批量图片时复用读图器实例，避免逐张初始化四档模型：先 `default_readers()`，再用 `build_solver(readers, baseline='max', ...)` 配置回调。此处 `baseline='max'` 按档位映射到实际读图器名称，不假定 `read_all` 的来源键名。
+## 实时流程和连续图片：先加载，再获取题图
+
+实时流程优先在题目出现前创建 `from spincap import AngleSession` 的
+`session = AngleSession()`，然后对每张新题调用 `session.read_angle(image_path)`。
+保持同一会话，默认四档筛选和 `max` 基准不变；不缓存上一次图片的角度。
+需要完整回调时，也可先 `default_readers()`，再用 `build_solver(readers, baseline='max', ...)`。
+
+Agent 通过进程调用时，优先启动一次 `python -m spincap --stdio`，读取一行
+`type:"ready"` 后再获取题图，保持 stdin/stdout 连接。每张图向同一进程写一行：
+
+```json
+{"id":1,"image":"/absolute/path/puzzle.png","pixels_per_turn":240,"complement":true}
+```
+
+每行响应包含 `type:"result"`、原请求 `id`、`angle_cw`、`usable`、可选 `offset_px`、
+`elapsed_ms`。错误另含 `error`；一条失败不结束进程。用 `usable`/`error` 判定每条请求，
+不能用常驻进程的退出码代替。关闭 stdin 后进程退出。只发送本次实际题图的绝对路径。
+
+先完成环境准备和控件标定，再连续取图、推理、拖动与读取结果。分别记录加载、
+取图、推理、拖动耗时。若浏览器工具每步耗时很长，不把这类慢速试验当作模型速度或
+站点通过率的依据，也不通过不断换题掩盖问题；遵守当前工具的授权与操作范围。
 
 需要接入自动化流程时，按仓库 README 的回调接口或 `examples/offline_demo.py` 实现当前题图读取、换图、拖动和 `verify`。示例的模拟成功不能当作网站通过证据。算法 `usable:true` 表示读数通过筛选；只有实际页面/业务结果验证成功才能报告验证码已通过。仅识别图片的请求不扩展为登录、操作网站或自动刷新。
 

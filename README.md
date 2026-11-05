@@ -97,8 +97,21 @@ from spincap import read_all
 print(read_all("puzzle.png"))
 ```
 
-需要批量处理图片时，可用 `default_readers()` 初始化一次并将实例复用于 `build_solver`，
-避免逐张调用便利函数时重新构造模型。
+连续识别或实时接入时，先创建会话，再获取题图，复用已经加载的模型：
+
+```python
+from spincap import AngleSession, offset_for
+
+session = AngleSession()  # 在题目出现前加载一次四档模型
+angle = session.read_angle("puzzle.png")
+if angle is not None:
+    print(offset_for(angle, 240, complement=True))
+# 下一张继续 session.read_angle(next_image)，不重新创建会话。
+```
+
+`AngleSession` 保留与 `read_angle` 相同的默认筛选和基准规则，每次对新图片重新推理。
+每个顺序执行的工作进程使用自己的会话；不要跨线程共享模型实例。
+已有回调流程仍可用 `default_readers()` 初始化一次并复用于 `build_solver`。
 
 ## 命令行
 
@@ -112,6 +125,28 @@ spincap puzzle.png --all
 输出为 JSON，例如 `{"angle_cw": 90.0, "usable": true, "offset_px": 180.0}`。
 退出码：`0` 有可用结果，`2` 没有共识/图片读取失败或参数错误，`1` 初始化或依赖错误。
 `--all` 只列读数，不作共识判定。
+
+### 常驻调用，避免每张图重新启动模型
+
+```bash
+python -m spincap --stdio
+```
+
+启动后先输出一行 `{"type":"ready","init_seconds":3.0}`（时间仅为示例）。
+调用方等收到 `ready` 再获取题目；保持同一个进程和输入流开启，每行发送一个 JSON 请求：
+
+```json
+{"id":1,"image":"/absolute/path/puzzle.png","pixels_per_turn":240,"complement":true}
+```
+
+每条请求返回一行结果，含原样返回的 `id`、`type:"result"`、`angle_cw`、`usable`、
+可选 `offset_px` 和 `elapsed_ms`。无共识时 `usable:false`；非法请求另含 `error`，
+不会中止后续请求。`ready` 前初始化失败时退出码为 `1`，错误写入 stderr。
+每条请求成功与否看结果的 `usable`/`error`，工作进程读到 EOF 后正常退出 `0`。
+请求必须使用本地绝对路径；Windows 可写 `C:/images/puzzle.png`。
+
+这是本地识图进程，不打开网络端口，也不操作浏览器。启动速度、单张推理速度与
+网页取图/拖动耗时应分别记录；浏览器调用很慢时，单纯复用模型不能消除网页操作延迟。
 
 ## 无需模型的快速验证
 
