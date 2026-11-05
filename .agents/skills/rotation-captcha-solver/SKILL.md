@@ -1,9 +1,9 @@
 ---
-name: rotation-image-model
-description: 调用旋转图片算法模型读取本地图片偏角、计算旋转滑块位移，或将求解器接入 Python/Agent 程序。用于旋转图片、图片转正角度和旋转验证码；不处理拼图缺口、文字识别或点选题。
+name: rotation-captcha-solver
+description: 调用旋转验证码求解器读取本地图片偏角、计算旋转滑块位移，或将求解器接入 Python/Agent 程序。用于旋转图片、图片转正角度和旋转验证码；不处理拼图缺口、文字识别或点选题。
 ---
 
-# 旋转图片算法模型
+# 旋转验证码求解器
 
 使用现成的 `spincap` Python API 或 JSON 命令行执行识别，不凭目测生成算法结果。
 
@@ -20,8 +20,8 @@ description: 调用旋转图片算法模型读取本地图片偏角、计算旋�
 
 ```bash
 git lfs install
-git clone https://github.com/JonyQY/rotation-image-model.git
-cd rotation-image-model
+git clone https://github.com/JonyQY/rotation-captcha-solver.git
+cd rotation-captcha-solver
 git lfs pull
 python -m venv .venv
 ```

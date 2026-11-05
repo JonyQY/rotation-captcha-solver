@@ -1,4 +1,6 @@
-# 旋转图片算法模型
+# 旋转验证码求解器
+
+**Rotation Captcha Solver**
 
 旋转验证码求解框架：**读取图片偏角 → 多档读数一致性筛选 → 换算滑块位移 → 由调用方验证结果**。
 
@@ -8,25 +10,25 @@
 ## Agent 调用
 
 仓库已附带标准技能文件：
-[`.agents/skills/rotation-image-model/SKILL.md`](.agents/skills/rotation-image-model/SKILL.md)。
+[`.agents/skills/rotation-captcha-solver/SKILL.md`](.agents/skills/rotation-captcha-solver/SKILL.md)。
 它包含环境准备、实际命令、JSON/退出码解释、Python 接入和权重恢复步骤。
 
 克隆仓库后，在仓库中启动支持该目录的 Agent，并发送：
 
 ```text
-使用 $rotation-image-model，识别 /absolute/path/puzzle.png 的旋转角度，返回实际 JSON 结果。
+使用 $rotation-captcha-solver，识别 /absolute/path/puzzle.png 的旋转角度，返回实际 JSON 结果。
 ```
 
 Codex 会发现仓库内 `.agents/skills` 中的技能，见
 [官方技能目录说明](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)。
-其他 Agent 可直接读取上述 `SKILL.md`，或把整个 `rotation-image-model` 技能文件夹
+其他 Agent 可直接读取上述 `SKILL.md`，或把整个 `rotation-captcha-solver` 技能文件夹
 复制到该工具支持的技能目录。技能本身不携带权重；单独复制技能后，应按技能说明安装本仓库的求解器。
 根目录的 [AGENTS.md](AGENTS.md) 也提供了调用入口。
 
 有轨道参数时可以直接说明：
 
 ```text
-使用 rotation-image-model 技能识别 /absolute/path/puzzle.png。
+使用 rotation-captcha-solver 技能识别 /absolute/path/puzzle.png。
 轨道每圈 240 像素、使用补角换算；返回角度和位移，不操作网页。
 ```
 
@@ -39,8 +41,8 @@ Codex 会发现仓库内 `.agents/skills` 中的技能，见
 
 ```bash
 git lfs install
-git clone https://github.com/JonyQY/rotation-image-model.git
-cd rotation-image-model
+git clone https://github.com/JonyQY/rotation-captcha-solver.git
+cd rotation-captcha-solver
 git lfs pull
 python -m venv .venv
 ```
