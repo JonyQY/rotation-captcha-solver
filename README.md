@@ -38,6 +38,8 @@ Codex 会发现仓库内 `.agents/skills` 中的技能，见
 ## 克隆并安装
 
 需要 Python **3.10 或以上**，推荐 3.11–3.13，使用 64 位 Python。
+Windows 建议使用短目录，例如 `C:/work/rotation-captcha-solver`；过深的目录可能让
+NumPy 等依赖安装时报 `WinError 206`。这时可在短路径新建虚拟环境，再从仓库目录安装。
 
 ```bash
 git lfs install
@@ -64,6 +66,40 @@ python -m pip install ".[model]"
 请按上面的克隆步骤安装，确保 Git LFS 已下载完整权重。
 
 本项目目前通过 GitHub 分发；不要把 `pip install spincap` 当作本项目的安装地址。
+
+### 安装恢复（Windows）
+
+如果 Git LFS 下载在当前网络中长时间停在 0 字节，可先将代码与模型下载分开。
+在一个尚不存在同名仓库的新目录中执行（PowerShell）：
+
+```powershell
+$savedLfsSkip = $env:GIT_LFS_SKIP_SMUDGE
+try {
+    $env:GIT_LFS_SKIP_SMUDGE = '1'
+    git clone https://github.com/JonyQY/rotation-captcha-solver.git
+    if ($LASTEXITCODE -ne 0) { throw '代码克隆失败，请先解决网络或仓库访问权限' }
+} finally { $env:GIT_LFS_SKIP_SMUDGE = $savedLfsSkip }
+cd rotation-captcha-solver
+$savedGoDebug = $env:GODEBUG
+try {
+    $env:GODEBUG = 'http2client=0'
+    git -c http.version=HTTP/1.1 -c lfs.concurrenttransfers=3 -c lfs.dialtimeout=15 -c lfs.activitytimeout=30 lfs pull
+    if ($LASTEXITCODE -ne 0) { throw '模型未下载完整，暂不继续安装' }
+} finally { $env:GODEBUG = $savedGoDebug }
+```
+
+这组参数仅影响本次下载，不修改系统网络设置。模型约 384 MB，实际用时取决于网络；
+必须等 `git lfs pull` 成功后再安装模型包。不要用已有环境的权重替代一次失败的拉取。
+Git LFS 的网络配置见[官方配置说明](https://github.com/git-lfs/git-lfs/blob/main/docs/man/git-lfs-config.adoc)。
+
+遇到 `WinError 206` 时，在仓库目录创建并使用短路径环境，例如：
+
+```powershell
+python -m venv C:/venvs/rotation-captcha-solver
+C:/venvs/rotation-captcha-solver/Scripts/python.exe -m pip install ".[model]"
+```
+
+之后的安装和调用均使用该环境的解释器，不需要激活脚本。
 
 ## 最短 Python 调用
 
