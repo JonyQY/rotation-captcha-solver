@@ -7,6 +7,13 @@
 提供 Python API、命令行和浏览器回调接口，可独立使用，不依赖原来的复制粘贴工作台。
 附带四档本地模型权重，提供图片角度识别、读数筛选和滑块位移换算。
 
+## 视频演示
+
+[![旋转验证码求解器录制演示](docs/media/rotation-captcha-demo.jpg)](https://github.com/JonyQY/rotation-captcha-solver/blob/main/docs/media/rotation-captcha-demo.mp4)
+
+点击封面观看约 11 秒的录制演示：图片角度识别、旋转校正预览与滑块操作。
+[打开视频](https://github.com/JonyQY/rotation-captcha-solver/blob/main/docs/media/rotation-captcha-demo.mp4) · [下载 MP4](https://github.com/JonyQY/rotation-captcha-solver/raw/refs/heads/main/docs/media/rotation-captcha-demo.mp4)
+
 ## Agent 调用
 
 仓库已附带标准技能文件：
