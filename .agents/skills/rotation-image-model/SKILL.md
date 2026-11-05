@@ -117,3 +117,15 @@ Agent 通过进程调用时，优先启动一次 `python -m spincap --stdio`，�
 - 校验失败：重新拉取并核对权重，保留完整性校验；不要把损坏文件交给推理引擎。
 
 最终报告实际使用的图片、模式、角度、可选位移及是否得到可用结果。没有执行时明确说明；不要把算法结果说成已通过第三方站点验证。
+
+## 百度单次诊断
+
+用户明确指定使用本地 Playwright 时，可按 README 的独立诊断入口运行
+`python -m spincap.diagnostic --output <报告目录> --control-dir <控制目录>`。
+用独立后台进程保持浏览器，不把交互终端存活当作会话保障。后续通过
+`python -m spincap.diagnostic_control --control-dir <控制目录> status` 检查，
+登录后调用 `prepare` 自动回到测试页，不重启浏览器来导航。登录由用户完成。
+未明确允许保存登录时不加 `--keep-login`，不读取现有浏览器配置。
+取得本次实际验证码操作授权后才发送 `test_once --confirmed`，失败不自动重发。
+先核对报告的实际旋转、验证码 `code/op` 和业务 `status_code`，再判断失败发生在哪层。
+`widget_success_business_unconfirmed` 只代表控件通过，`business_success` 才代表提交成功。
