@@ -9,9 +9,9 @@
 
 ## 视频演示
 
-[![旋转验证码求解器录制演示](docs/media/rotation-captcha-demo.jpg)](https://github.com/JonyQY/rotation-captcha-solver/blob/main/docs/media/rotation-captcha-demo.mp4)
+[![旋转验证码求解器录制演示（自动循环播放）](docs/media/rotation-captcha-demo.gif)](https://github.com/JonyQY/rotation-captcha-solver/blob/main/docs/media/rotation-captcha-demo.mp4)
 
-点击封面观看约 11 秒的录制演示：图片角度识别、旋转校正预览与滑块操作。
+上方自动循环播放约 11 秒的录制演示：图片角度识别、旋转校正预览与滑块操作。点击动图可观看高清原视频。
 [打开视频](https://github.com/JonyQY/rotation-captcha-solver/blob/main/docs/media/rotation-captcha-demo.mp4) · [下载 MP4](https://github.com/JonyQY/rotation-captcha-solver/raw/refs/heads/main/docs/media/rotation-captcha-demo.mp4)
 
 ## Agent 调用
