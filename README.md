@@ -2,6 +2,13 @@
 
 **Rotation Captcha Solver**
 
+GitHub：[`JonyQY/rotation-captcha-solver`](https://github.com/JonyQY/rotation-captcha-solver) ·
+[项目主页 / Project homepage](https://jonyqy.github.io/rotation-captcha-solver/) ·
+[纯文本项目导航](https://jonyqy.github.io/rotation-captcha-solver/llms.txt)
+
+Open-source Python rotation CAPTCHA solver with local ONNX INT8 image-angle estimation,
+multi-model consensus, slider-offset calculation, a JSON CLI and an Agent Skill.
+
 旋转验证码求解框架：**读取图片偏角 → 多档读数一致性筛选 → 换算滑块位移 → 由调用方验证结果**。
 
 提供 Python API、命令行和浏览器回调接口，可独立使用，不依赖原来的复制粘贴工作台。
@@ -96,7 +103,7 @@ python -m pip install ".[model]"
 最大模型采用分片存储，首次使用会自动合并到用户缓存目录并校验完整性；以后直接加载缓存。
 默认使用 CPU，不需要 GPU、API 密钥或 PyTorch。
 
-私密仓库需要先登录有权访问的 GitHub 账号；仓库公开后其他人即可直接克隆。
+仓库已公开，无需登录 GitHub 即可克隆。
 请按上面的克隆步骤安装，确保 Git LFS 已下载完整权重。
 
 本项目目前通过 GitHub 分发；不要把 `pip install spincap` 当作本项目的安装地址。

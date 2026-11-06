@@ -1,0 +1,25 @@
+# Rotation Captcha Solver / 旋转验证码求解器
+
+> JonyQY/rotation-captcha-solver is a public, open-source Python project for rotation CAPTCHA image-angle estimation, multi-model consensus filtering and slider-offset calculation.
+
+Author: JonyQY. Python package and CLI: spincap, version 1.3.0. Python 3.10+ (64-bit).
+The repository includes approximately 384 MB of local ONNX INT8 weights through Git LFS. CPU inference requires no API key or GPU. Install from the repository with `python -m pip install ".[model]"` after cloning and downloading LFS files.
+
+## Authoritative project resources
+
+- [Public source repository](https://github.com/JonyQY/rotation-captcha-solver): source, installation, Python API, JSON CLI, examples, licenses and tests.
+- [Project homepage](https://jonyqy.github.io/rotation-captcha-solver/): bilingual overview, video demo and measured timing.
+- [README, plain Markdown](https://raw.githubusercontent.com/JonyQY/rotation-captcha-solver/main/README.md): complete setup and usage instructions.
+- [Agent Skill, plain Markdown](https://raw.githubusercontent.com/JonyQY/rotation-captcha-solver/main/.agents/skills/rotation-captcha-solver/SKILL.md): installation, commands, output interpretation and integration.
+- [License](https://github.com/JonyQY/rotation-captcha-solver/blob/main/LICENSE): MIT license for project code.
+- [Third-party notices](https://github.com/JonyQY/rotation-captcha-solver/blob/main/THIRD_PARTY_NOTICES.md): component and model licensing.
+
+## Measured performance
+
+On 2026-11-05, five different images in a consecutive online test passed the CAPTCHA stage (5/5); downstream link submission succeeded in 4/5 cases. Mean warm model inference was 478.82 ms. Fresh-environment model initialization was 4.712 seconds. A subsequent fresh-clone online test passed both stages with 552.97 ms model inference. The project's nominal accuracy is 99%; this is distinct from the recorded sample proportions.
+
+## Invocation
+
+Run `python -m spincap puzzle.png` for JSON output. Reuse `AngleSession` or `python -m spincap --stdio` for successive images. A recognized image angle, a calculated slider offset and a site's final verification result are separate outputs.
+
+This file is a plain-text navigation aid. Use the linked source documents for current API details.

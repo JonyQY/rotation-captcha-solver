@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>旋转验证码求解器 | Rotation Captcha Solver — JonyQY</title>
+  <meta name="description" content="JonyQY 的开源旋转验证码求解器 Rotation Captcha Solver：Python 图片角度识别、ONNX INT8 本地模型、多档一致性筛选与滑块位移计算，支持 CLI、Python API 和 Agent Skill。">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://jonyqy.github.io/rotation-captcha-solver/">
+  <link rel="sitemap" type="application/xml" href="sitemap.xml">
+  <link rel="alternate" type="text/plain" href="llms.txt" title="Plain-text project guide">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="旋转验证码求解器 · Rotation Captcha Solver">
+  <meta property="og:description" content="开源 Python 旋转图片角度识别与滑块位移计算，附本地 ONNX INT8 权重及 Agent Skill。">
+  <meta property="og:url" content="https://jonyqy.github.io/rotation-captcha-solver/">
+  <meta property="og:image" content="https://jonyqy.github.io/rotation-captcha-solver/media/rotation-captcha-demo.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "Rotation Captcha Solver",
+    "alternateName": ["旋转验证码求解器", "JonyQY/rotation-captcha-solver"],
+    "description": "Open-source Python rotation CAPTCHA solver with local ONNX INT8 image-angle estimation, multi-model consensus, slider-offset calculation, a JSON CLI and an Agent Skill.",
+    "url": "https://jonyqy.github.io/rotation-captcha-solver/",
+    "codeRepository": "https://github.com/JonyQY/rotation-captcha-solver",
+    "author": {"@type": "Person", "name": "JonyQY", "url": "https://github.com/JonyQY"},
+    "programmingLanguage": "Python",
+    "runtimePlatform": "Python 3.10+",
+    "license": "https://github.com/JonyQY/rotation-captcha-solver/blob/main/LICENSE",
+    "version": "1.3.0",
+    "keywords": ["rotation captcha solver", "image orientation", "ONNX", "Python", "Agent Skill", "旋转验证码", "图片角度识别"]
+  }
+  </script>
+  <style>
+    :root{color-scheme:light;--ink:#17243b;--muted:#52617a;--line:#dbe3ef;--blue:#1758d3;--surface:#f3f6fc}
+    *{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font:17px/1.75 system-ui,-apple-system,"Segoe UI",sans-serif}
+    main{max-width:1040px;margin:auto;padding:32px 24px 64px}nav{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:48px;font-size:14px}
+    a{color:var(--blue);text-underline-offset:4px}h1{font-size:clamp(32px,5vw,56px);letter-spacing:-.04em;line-height:1.2;margin:16px 0}h2{font-size:26px;margin:44px 0 16px;line-height:1.35}
+    p{margin:12px 0}.eyebrow{font-size:13px;letter-spacing:.1em;color:var(--blue);font-weight:700}.lead{font-size:20px;max-width:800px;color:var(--muted)}
+    .buttons{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}.button{display:inline-block;padding:11px 20px;border:1px solid var(--line);border-radius:8px;text-decoration:none;font-weight:600}.primary{background:var(--blue);border-color:var(--blue);color:white}
+    .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin:32px 0}.fact{padding:20px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}.fact strong{font-size:28px;display:block}.fact span{color:var(--muted);font-size:14px}
+    video{display:block;width:100%;height:auto;background:#111;border:1px solid var(--line);border-radius:10px}pre{overflow:auto;padding:20px;background:#101d32;color:#e6edff;border-radius:10px;font-size:14px;line-height:1.8}code{font-family:ui-monospace,Consolas,monospace}
+    ul{padding-left:24px}.note,footer{font-size:14px;color:var(--muted)}footer{border-top:1px solid var(--line);margin-top:48px;padding-top:20px}details{border:1px solid var(--line);border-radius:8px;padding:12px 16px}summary{cursor:pointer;font-weight:600}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+<main>
+  <nav aria-label="项目导航"><strong>JonyQY / rotation-captcha-solver</strong><a href="https://github.com/JonyQY/rotation-captcha-solver">GitHub 源码 ↗</a></nav>
+  <header>
+    <div class="eyebrow">OPEN SOURCE · PYTHON · LOCAL ONNX MODELS</div>
+    <h1>旋转验证码求解器</h1>
+    <p class="lead">Rotation Captcha Solver：识别图片旋转角度，通过多档读数一致性筛选，换算滑块位移。支持 Python API、JSON 命令行和 AI Agent 调用。</p>
+    <div class="buttons"><a class="button primary" href="https://github.com/JonyQY/rotation-captcha-solver#克隆并安装">克隆并安装</a><a class="button" href="https://github.com/JonyQY/rotation-captcha-solver#agent-调用">Agent Skill 接入</a></div>
+    <div class="facts"><div class="fact"><strong>99%</strong><span>项目标称准确率</span></div><div class="fact"><strong>0.48 秒</strong><span>单题求解实测平均耗时</span></div><div class="fact"><strong>本地 CPU</strong><span>ONNX INT8 · 无需 API 密钥</span></div></div>
+  </header>
+  <section aria-labelledby="demo"><h2 id="demo">录制演示</h2>
+    <video controls autoplay muted loop playsinline preload="metadata" poster="media/rotation-captcha-demo.jpg" width="1920" height="1080"><source src="media/rotation-captcha-demo.mp4" type="video/mp4"><a href="media/rotation-captcha-demo.mp4">下载演示视频</a></video>
+    <p class="note">约 11 秒录制演示：角度识别、旋转校正预览与滑块操作。</p>
+  </section>
+  <section aria-labelledby="features"><h2 id="features">开发者可以直接调用</h2>
+    <ul><li>附带四档本地 ONNX INT8 权重，通过 Git LFS 分发，约 384 MB。</li><li>提供图片偏角、共识可用性和可选的滑块像素位移，命令行输出 JSON。</li><li>使用 <code>AngleSession</code> 或 <code>--stdio</code> 复用已加载模型，适合连续调用。</li><li>仓库自带 <code>.agents/skills/rotation-captcha-solver/SKILL.md</code>，供支持技能的 Agent 读取。</li></ul>
+    <pre><code>git lfs install
+git clone https://github.com/JonyQY/rotation-captcha-solver.git
+cd rotation-captcha-solver
+git lfs pull
+python -m venv .venv
+# 激活虚拟环境后执行：
+python -m pip install ".[model]"
+python -m spincap puzzle.png</code></pre>
+    <p class="note">需要 64 位 Python 3.10+；Windows 建议使用短路径。完整环境准备、轨道标定和接口说明见 <a href="https://github.com/JonyQY/rotation-captcha-solver#readme">README</a>。</p>
+  </section>
+  <section aria-labelledby="performance"><h2 id="performance">实测记录</h2>
+    <p>2026-11-05 连续 5 道不同题图的验证码环节全部通过；模型已加载时，单题求解平均约 0.48 秒，范围约 0.44–0.56 秒。新克隆环境首次初始化约 4.7 秒。</p>
+    <details><summary>查看统计口径</summary><p>这组验证码环节为 5/5 通过，链接提交为 4/5 成功，两项分别统计。99% 是项目标称指标。完整页面测试平均约 8.24 秒，包含拖动、网页响应和观察等待。随后使用新克隆版本完成一次在线测试，验证码与链接提交均成功。实际速度随硬件和题图变化。</p></details>
+  </section>
+  <section aria-labelledby="english" lang="en"><h2 id="english">Rotation Captcha Solver by JonyQY</h2>
+    <p><strong>JonyQY/rotation-captcha-solver</strong> is an open-source Python project for rotation CAPTCHA image-angle estimation and slider-offset calculation. It ships local ONNX INT8 model weights, multi-model consensus filtering, a JSON CLI, a reusable Python session, and an Agent Skill. CPU inference needs no API key or GPU.</p>
+    <p>Clone the public GitHub repository with Git LFS, install <code>.[model]</code>, and run <code>python -m spincap puzzle.png</code>. The Python package name is <code>spincap</code>; install it from this repository.</p>
+  </section>
+  <section aria-labelledby="resources"><h2 id="resources">源码与纯文本入口</h2>
+    <ul><li><a href="https://github.com/JonyQY/rotation-captcha-solver">公开 GitHub 仓库</a></li><li><a href="https://raw.githubusercontent.com/JonyQY/rotation-captcha-solver/main/README.md">README 原文</a></li><li><a href="https://raw.githubusercontent.com/JonyQY/rotation-captcha-solver/main/.agents/skills/rotation-captcha-solver/SKILL.md">Agent Skill 原文</a></li><li><a href="llms.txt">纯文本项目导航（llms.txt）</a></li><li><a href="sitemap.xml">站点地图</a></li></ul>
+  </section>
+  <footer>作者 <a href="https://github.com/JonyQY">JonyQY</a> · <a href="https://github.com/JonyQY/rotation-captcha-solver/blob/main/LICENSE">MIT License</a> · <a href="https://github.com/JonyQY/rotation-captcha-solver/blob/main/THIRD_PARTY_NOTICES.md">第三方组件与模型许可</a></footer>
+</main>
+</body>
+</html>
