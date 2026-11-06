@@ -7,6 +7,8 @@
 提供 Python API、命令行和浏览器回调接口，可独立使用，不依赖原来的复制粘贴工作台。
 附带四档本地模型权重，提供图片角度识别、读数筛选和滑块位移换算。
 
+当前准确率：**99%**（作者提供数据）。
+
 ## 视频演示
 
 [![旋转验证码求解器录制演示（自动循环播放）](docs/media/rotation-captcha-demo.gif)](https://github.com/JonyQY/rotation-captcha-solver/blob/main/docs/media/rotation-captcha-demo.mp4)
